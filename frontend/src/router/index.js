@@ -80,6 +80,11 @@ const routes = [
         path: 'messages',
         name: 'AdminMessages',
         component: () => import('../views/admin/MessageManage.vue')
+      },
+      {
+        path: 'password',
+        name: 'AdminPassword',
+        component: () => import('../views/admin/PasswordManage.vue')
       }
     ],
     meta: { requiresAuth: true }

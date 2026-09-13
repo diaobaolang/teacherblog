@@ -24,6 +24,7 @@
         <el-button type="success" @click="$router.push('/admin/honor-wall')">管理荣誉墙</el-button>
         <el-button type="warning" @click="$router.push('/admin/articles/edit')">写新动态</el-button>
         <el-button type="info" @click="$router.push('/admin/messages')">审核留言</el-button>
+        <el-button type="danger" @click="$router.push('/admin/password')">修改密码</el-button>
       </div>
     </el-card>
   </div>

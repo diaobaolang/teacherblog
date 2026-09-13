@@ -38,6 +38,10 @@
             <el-icon><ChatDotRound /></el-icon>
             <span>学生与家长留言审核</span>
           </el-menu-item>
+          <el-menu-item index="/admin/password">
+            <el-icon><Lock /></el-icon>
+            <span>修改密码</span>
+          </el-menu-item>
         </el-menu>
       </el-aside>
 

@@ -48,6 +48,7 @@ export const sortMessages = (items) => request.put('/messages/admin/sort', { ite
 
 // 认证
 export const login = (data) => request.post('/auth/login', data)
+export const changePassword = (data) => request.post('/auth/change-password', data)
 
 // 图片上传
 export const uploadImage = (file) => {
