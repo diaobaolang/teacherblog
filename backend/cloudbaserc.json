@@ -1,0 +1,6 @@
+{
+  "envId": "teacherblog-d5gpp8xax79a35603",
+  "cloudrun": {
+    "name": "teacherblog-api"
+  }
+}

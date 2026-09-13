@@ -14,7 +14,7 @@
         shadow="hover"
         @click="goDetail(article.id)"
       >
-        <img v-if="article.cover_image" :src="article.cover_image" class="cover" />
+        <img v-if="article.cover_image" :src="$img(article.cover_image)" class="cover" />
         <div class="no-cover" v-else>
           <el-icon><Picture /></el-icon>
         </div>

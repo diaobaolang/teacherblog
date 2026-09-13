@@ -20,7 +20,7 @@
             class="photo-item"
             @click="openViewer(group, idx)"
           >
-            <img :src="photo.image_url" :alt="photo.title" loading="lazy" />
+            <img :src="$img(photo.image_url)" :alt="photo.title" loading="lazy" />
             <div v-if="photo.title" class="photo-label">{{ photo.title }}</div>
           </div>
         </div>
@@ -40,7 +40,7 @@
           <transition :name="slideDirection" mode="out-in">
             <div :key="currentIndex" class="viewer-image-wrap">
               <img
-                :src="currentPhotos[currentIndex]?.image_url"
+                :src="$img(currentPhotos[currentIndex]?.image_url)"
                 :alt="currentPhotos[currentIndex]?.title"
                 class="viewer-image"
               />
@@ -66,7 +66,7 @@
             :class="{ active: index === currentIndex }"
             @click="currentIndex = index"
           >
-            <img :src="photo.image_url" />
+            <img :src="$img(photo.image_url)" />
           </div>
         </div>
 

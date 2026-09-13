@@ -74,3 +74,55 @@ npm start
 ## 部署说明
 
 详见 `nginx/teacherblog.conf` 和 `技术方案.md`。
+
+### CloudBase 云部署
+
+本项目已部署到腾讯云 CloudBase，使用以下云资源：
+
+| 资源类型 | 说明 |
+|---------|------|
+| Cloud Run（云托管） | 后端 Node.js + Express 容器服务 |
+| 静态托管 | 前端 Vue 3 构建产物 |
+
+#### 访问地址
+
+- **前端网站**：https://teacherblog-d5gpp8xax79a35603-1300097627.tcloudbaseapp.com/
+- **后端 API**：https://teacherblog-api-313028-8-1300097627.sh.run.tcloudbase.com/api
+- **后台管理**：https://teacherblog-d5gpp8xax79a35603-1300097627.tcloudbaseapp.com/#/admin/login
+
+#### 环境信息
+
+- **EnvId**：`teacherblog-d5gpp8xax79a35603`
+- **区域**：ap-shanghai
+- **套餐**：体验版
+- **云托管服务名**：`teacherblog-api`
+- **云托管规格**：0.25 核 CPU / 0.5GB 内存 / 1-3 实例
+
+#### 默认管理员
+
+- 用户名：`admin`
+- 密码：`admin123456`
+
+#### 后端环境变量
+
+| 变量 | 值 |
+|------|-----|
+| `PORT` | 3000 |
+| `NODE_ENV` | production |
+| `DB_PATH` | /app/data/teacherblog.db |
+| `UPLOAD_DIR` | uploads |
+| `JWT_SECRET` | your-secret-key-change-this-2026 |
+| `ADMIN_USERNAME` | admin |
+| `ADMIN_PASSWORD` | admin123456 |
+
+#### 更新部署
+
+```bash
+# 更新后端（修改代码后重新部署）
+# 通过 CloudBase manageCloudRun 工具重新 deploy
+
+# 更新前端
+cd frontend
+npm run build
+# 通过 CloudBase manageHosting 工具重新 upload dist 目录
+```

@@ -25,7 +25,7 @@
             accept="image/*"
           >
             <div v-if="form.cover_image" class="cover-preview">
-              <img :src="form.cover_image" />
+              <img :src="$img(form.cover_image)" />
               <div class="cover-mask">点击更换</div>
             </div>
             <el-button v-else type="primary" plain :loading="coverUploading">上传封面图</el-button>

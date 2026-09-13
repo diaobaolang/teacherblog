@@ -43,18 +43,21 @@ const rules = {
 
 async function handleLogin() {
   if (!formRef.value) return
-  await formRef.value.validate(async (valid) => {
-    if (!valid) return
-    loading.value = true
-    try {
-      await auth.login(form)
-      router.push('/admin')
-    } catch (e) {
-      // 错误已在拦截器处理
-    } finally {
-      loading.value = false
-    }
-  })
+  loading.value = true
+  try {
+    await formRef.value.validate()
+  } catch {
+    loading.value = false
+    return
+  }
+  try {
+    await auth.login(form)
+    await router.push('/admin')
+  } catch (e) {
+    // 错误已在拦截器处理
+  } finally {
+    loading.value = false
+  }
 }
 </script>
 

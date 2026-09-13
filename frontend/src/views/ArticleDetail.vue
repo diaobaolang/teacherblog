@@ -15,9 +15,9 @@
         <span>{{ formatDate(article.created_at) }}</span>
       </div>
 
-      <img v-if="article.cover_image" :src="article.cover_image" class="cover" />
+      <img v-if="article.cover_image" :src="$img(article.cover_image)" class="cover" />
 
-      <div class="content" v-html="article.content"></div>
+      <div class="content" v-html="processedContent"></div>
     </article>
 
     <el-empty v-else description="动态不存在或未发布" />
@@ -25,13 +25,26 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { getArticle } from '../api'
+import { API_BASE } from '../api/request'
 
 const route = useRoute()
 const article = ref(null)
 const loading = ref(true)
+
+// 将富文本中的 /uploads/ 路径替换为后端绝对地址
+const processedContent = computed(() => {
+  if (!article.value?.content) return ''
+  return article.value.content.replace(
+    /src="\/uploads\//g,
+    `src="${API_BASE}/uploads/`
+  ).replace(
+    /src='\/uploads\//g,
+    `src='${API_BASE}/uploads/`
+  )
+})
 
 onMounted(async () => {
   try {

@@ -15,7 +15,7 @@
         @click="goHonorWall"
       >
         <el-carousel-item v-for="(photo, index) in carouselPhotos" :key="index">
-          <img :src="photo.image_url" :alt="photo.title" class="carousel-img" />
+          <img :src="$img(photo.image_url)" :alt="photo.title" class="carousel-img" />
           <div v-if="photo.title" class="carousel-title">{{ photo.title }}</div>
         </el-carousel-item>
       </el-carousel>
@@ -41,7 +41,7 @@
           <span>个人介绍</span>
         </div>
       </template>
-      <div class="profile-content" v-html="profile.content || '暂无介绍'"></div>
+      <div class="profile-content" v-html="profileContent"></div>
     </el-card>
 
     <!-- 班级照轮播 -->
@@ -59,7 +59,7 @@
         @click="goClassWall"
       >
         <el-carousel-item v-for="(photo, index) in carouselClassPhotos" :key="index">
-          <img :src="photo.image_url" :alt="photo.title" class="carousel-img" />
+          <img :src="$img(photo.image_url)" :alt="photo.title" class="carousel-img" />
           <div v-if="photo.title" class="carousel-title">{{ photo.title }}</div>
         </el-carousel-item>
       </el-carousel>
@@ -88,7 +88,7 @@
       </template>
       <div v-if="latestArticles.length" class="article-list">
         <div v-for="article in latestArticles" :key="article.id" class="article-item" @click="goArticle(article.id)">
-          <img v-if="article.cover_image" :src="article.cover_image" class="article-cover" />
+          <img v-if="article.cover_image" :src="$img(article.cover_image)" class="article-cover" />
           <div class="article-info">
             <h3 class="article-title">{{ article.title }}</h3>
             <p class="article-summary">{{ article.summary || '暂无摘要' }}</p>
@@ -105,6 +105,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getProfile, getAllHonorData, getAllClassData, getArticles } from '../api'
+import { API_BASE } from '../api/request'
 
 const router = useRouter()
 
@@ -112,6 +113,18 @@ const profile = ref({ content: '' })
 const honorGroups = ref([])
 const classGroups = ref([])
 const latestArticles = ref([])
+
+// 个人介绍富文本中的 /uploads/ 路径替换为后端绝对地址
+const profileContent = computed(() => {
+  if (!profile.value.content) return '暂无介绍'
+  return profile.value.content.replace(
+    /src="\/uploads\//g,
+    `src="${API_BASE}/uploads/`
+  ).replace(
+    /src='\/uploads\//g,
+    `src='${API_BASE}/uploads/`
+  )
+})
 
 // 所有荣誉照片（从所有分组中收集）
 const honorPhotos = computed(() => {

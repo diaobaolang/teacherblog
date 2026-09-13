@@ -68,7 +68,7 @@
           <template #item="{ element }">
             <div class="photo-row">
               <el-icon class="photo-drag"><Rank /></el-icon>
-              <img :src="element.image_url" class="photo-thumb" />
+              <img :src="$img(element.image_url)" class="photo-thumb" />
               <el-input v-model="element.title" placeholder="标题（可选）" class="photo-title-input" @blur="handleEditPhoto(element)" />
               <el-popconfirm title="确定删除此照片？" @confirm="handleDeletePhoto(element.id)">
                 <template #reference>
@@ -96,7 +96,7 @@
             accept="image/*"
           >
             <div v-if="groupForm.cover_image" class="cover-preview">
-              <img :src="groupForm.cover_image" />
+              <img :src="$img(groupForm.cover_image)" />
               <div class="cover-mask">点击更换</div>
             </div>
             <el-button v-else type="primary" plain :loading="coverUploading">上传封面</el-button>
