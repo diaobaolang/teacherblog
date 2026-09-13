@@ -5,9 +5,9 @@
 ## 技术栈
 
 - 前端：Vue 3 + Vite + Element Plus + Pinia
-- 后端：Node.js + Express + better-sqlite3
+- 后端：Node.js + Express
 - 认证：JWT
-- 数据库：SQLite（零运维）
+- 数据库：CloudBase PostgreSQL（通过 HTTPS 数据 API 访问，无需自建连接）
 
 ## 项目结构
 
@@ -109,20 +109,36 @@ npm start
 |------|-----|
 | `PORT` | 3000 |
 | `NODE_ENV` | production |
-| `DB_PATH` | /app/data/teacherblog.db |
+| `CLOUDBASE_ENV_ID` | teacherblog-d5gpp8xax79a35603 |
+| `CLOUDBASE_PUBLISHABLE_KEY` | 可选，未设置时使用 `src/db/index.js` 内置的默认 Publishable Key |
 | `UPLOAD_DIR` | uploads |
-| `JWT_SECRET` | your-secret-key-change-this-2026 |
+| `JWT_SECRET` | teacherblog-jwt-secret-2026 |
 | `ADMIN_USERNAME` | admin |
 | `ADMIN_PASSWORD` | admin123456 |
 
 #### 更新部署
 
-```bash
-# 更新后端（修改代码后重新部署）
-# 通过 CloudBase manageCloudRun 工具重新 deploy
+前端调用的后端地址不再写死在源码里，而是构建时由 `frontend/.env.production` 注入
+（`src/api/request.js` 读取 `import.meta.env.VITE_API_BASE`）：
 
-# 更新前端
+```bash
+# 1. 更新后端（改动了 backend 代码时）
+#    通过 CloudBase manageCloudRun 工具对 teacherblog-api 重新 deploy
+
+# 2. 更新前端
 cd frontend
-npm run build
-# 通过 CloudBase manageHosting 工具重新 upload dist 目录
+npm run build     # 自动读取 .env.production 的 VITE_API_BASE
+#    通过 CloudBase manageHosting 工具 upload dist 目录
 ```
+
+> - 若更换云托管服务或域名，只需修改 `frontend/.env.production` 里的 `VITE_API_BASE` 后重新构建。
+> - 本地 `npm run dev` 不会读取该文件，仍由 Vite 代理转发到 `http://localhost:3001`。
+
+#### 已知限制
+
+上传接口 `/api/admin/upload` 把图片写入容器内的 `uploads/` 目录，而云托管容器未挂载持久化存储，因此：
+
+- 在本地开发环境上传的图片不会出现在线上（线上容器里没有这些文件）；
+- 每次重新部署后端，容器内之前上传的图片都会丢失。
+
+如需图片持久化，建议改为上传至 CloudBase 云存储（COS），或为云托管挂载 CFS 文件存储。

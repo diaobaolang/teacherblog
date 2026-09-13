@@ -1,8 +1,9 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 
-// 后端地址 - 本地开发留空走 Vite proxy，部署时改为 CloudRun 地址
-export const API_BASE = ''
+// 后端地址 - 本地开发留空走 Vite proxy；
+// 生产构建时由 .env.production 中的 VITE_API_BASE 注入 Cloud Run 地址
+export const API_BASE = import.meta.env.VITE_API_BASE || ''
 
 // 将 /uploads/ 开头的相对路径转为后端绝对地址
 export function resolveUrl(url) {
