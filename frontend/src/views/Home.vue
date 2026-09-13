@@ -1,13 +1,31 @@
 <template>
   <div class="home">
     <!-- 轮播图 -->
-    <div v-if="carousel.length" class="carousel-section">
-      <el-carousel height="360px" :interval="4000" arrow="hover" class="carousel">
+    <div class="carousel-section">
+      <el-carousel
+        v-if="carousel.length"
+        height="360px"
+        :interval="4000"
+        arrow="hover"
+        class="carousel"
+      >
         <el-carousel-item v-for="img in carousel" :key="img.id">
           <img :src="img.image_url" :alt="img.title" class="carousel-img" />
           <div v-if="img.title" class="carousel-title">{{ img.title }}</div>
         </el-carousel-item>
       </el-carousel>
+
+      <!-- 无轮播图数据时的占位 -->
+      <div v-else class="carousel-placeholder">
+        <div class="placeholder-item">
+          <el-icon class="placeholder-icon"><PictureFilled /></el-icon>
+          <p class="placeholder-text">轮播图区域</p>
+          <p class="placeholder-sub">请在后台上传轮播图</p>
+          <el-button type="primary" text @click="$router.push('/admin/carousel')" class="placeholder-btn">
+            前往上传
+          </el-button>
+        </div>
+      </div>
     </div>
 
     <!-- 个人介绍 -->
@@ -182,9 +200,50 @@ function formatDate(dateStr) {
   color: #c0c4cc;
 }
 
+.carousel-placeholder {
+  height: 360px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.placeholder-item {
+  text-align: center;
+  color: #fff;
+}
+
+.placeholder-icon {
+  font-size: 56px;
+  opacity: 0.8;
+}
+
+.placeholder-text {
+  font-size: 20px;
+  font-weight: 600;
+  margin-top: 12px;
+}
+
+.placeholder-sub {
+  font-size: 14px;
+  opacity: 0.7;
+  margin-top: 4px;
+}
+
+.placeholder-btn {
+  color: #fff;
+  margin-top: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
 @media (max-width: 768px) {
   .carousel-section :deep(.el-carousel) {
     height: 200px !important;
+  }
+  .carousel-placeholder {
+    height: 200px;
   }
   .article-cover {
     width: 90px;
