@@ -8,6 +8,7 @@
 - 后端：Node.js + Express
 - 认证：JWT
 - 数据库：CloudBase PostgreSQL（通过 HTTPS 数据 API 访问，无需自建连接）
+- 图片存储：CloudBase 云存储（PG 模式 pgstore，公开桶 `blog`）
 
 ## 项目结构
 
@@ -83,6 +84,7 @@ npm start
 |---------|------|
 | Cloud Run（云托管） | 后端 Node.js + Express 容器服务 |
 | 静态托管 | 前端 Vue 3 构建产物 |
+| 云存储（pgstore） | 公开桶 `blog`，存放后台上传的图片 |
 
 #### 访问地址
 
@@ -111,10 +113,12 @@ npm start
 | `NODE_ENV` | production |
 | `CLOUDBASE_ENV_ID` | teacherblog-d5gpp8xax79a35603 |
 | `CLOUDBASE_PUBLISHABLE_KEY` | 可选，未设置时使用 `src/db/index.js` 内置的默认 Publishable Key |
-| `UPLOAD_DIR` | uploads |
+| `UPLOAD_DIR` | uploads（仅兼容历史文件） |
 | `JWT_SECRET` | teacherblog-jwt-secret-2026 |
 | `ADMIN_USERNAME` | admin |
 | `ADMIN_PASSWORD` | admin123456 |
+| `CLOUDBASE_API_KEY` | 云存储服务端 API Key（service_role），用于上传图片，**不要泄漏** |
+| `CLOUDBASE_STORAGE_BUCKET` | blog |
 
 #### 更新部署
 
@@ -134,11 +138,22 @@ npm run build     # 自动读取 .env.production 的 VITE_API_BASE
 > - 若更换云托管服务或域名，只需修改 `frontend/.env.production` 里的 `VITE_API_BASE` 后重新构建。
 > - 本地 `npm run dev` 不会读取该文件，仍由 Vite 代理转发到 `http://localhost:3001`。
 
-#### 已知限制
+#### 图片存储
 
-上传接口 `/api/admin/upload` 把图片写入容器内的 `uploads/` 目录，而云托管容器未挂载持久化存储，因此：
+后台上传的图片保存在 CloudBase 云存储（PG 模式 pgstore）的公开桶 `blog` 中，
+不再写入容器磁盘——云托管容器没有持久化存储，落盘的文件重新部署后会全部丢失。
 
-- 在本地开发环境上传的图片不会出现在线上（线上容器里没有这些文件）；
-- 每次重新部署后端，容器内之前上传的图片都会丢失。
+上传链路：`POST /api/admin/upload`（需管理员 JWT）→ 内存缓冲 → 转存云存储 →
+数据库只保存返回的**公网直链**（`https://{envId}.api.tcloudbasegateway.com/v1/storages/object/blog/...`）。
 
-如需图片持久化，建议改为上传至 CloudBase 云存储（COS），或为云托管挂载 CFS 文件存储。
+相关配置：
+
+| 项 | 值 |
+|----|-----|
+| 桶名 | `blog` |
+| 访问级别 | public（可匿名读取，图片可直接用于 `<img src>`） |
+| 单文件上限 | 10MB |
+| 允许类型 | image/jpeg、image/png、image/gif、image/webp |
+
+> 若 `CLOUDBASE_API_KEY` 未配置，服务仍可启动，但上传接口会返回 500 并在日志中提示。
+> 重建 API Key 后，需同步更新云托管的环境变量与本地 `backend/.env`。

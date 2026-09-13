@@ -19,6 +19,7 @@ const uploadRoutes = require('./routes/upload');
 const carouselRoutes = require('./routes/carousel');
 
 const { errorHandler, notFound } = require('./middleware/error-handler');
+const { isConfigured: isStorageConfigured } = require('./storage');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -31,7 +32,7 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 静态文件 - 上传的图片
+// 静态文件 - 上传的图片（新上传已改为云存储直链，这里仅兜底本地历史文件）
 app.use('/uploads', express.static(path.join(__dirname, '..', process.env.UPLOAD_DIR || 'uploads')));
 
 // 公开 API 路由
@@ -58,6 +59,9 @@ process.on('uncaughtException', (err) => {
 
 // 初始化数据库后启动服务
 initDatabase().then(() => {
+  if (!isStorageConfigured()) {
+    console.warn('[teacherblog] 未配置 CLOUDBASE_API_KEY，图片上传到云存储将不可用');
+  }
   app.listen(PORT, () => {
     console.log(`[teacherblog] 后端服务已启动: http://localhost:${PORT}`);
   });
