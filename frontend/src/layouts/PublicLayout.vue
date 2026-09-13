@@ -1,5 +1,8 @@
 <template>
   <div class="public-layout">
+    <!-- 灰色粒子浮动背景 -->
+    <ParticleBackground />
+
     <!-- 顶部导航 -->
     <header class="header">
       <div class="container header-inner">
@@ -52,6 +55,7 @@
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { HomeFilled, Document, ChatDotRound } from '@element-plus/icons-vue'
+import ParticleBackground from '../components/ParticleBackground.vue'
 
 const route = useRoute()
 const year = ref(new Date().getFullYear())
