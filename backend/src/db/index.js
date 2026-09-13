@@ -169,6 +169,30 @@ async function initDatabase() {
     )
   `);
 
+  // 荣誉墙分组
+  dbInstance.run(`
+    CREATE TABLE IF NOT EXISTS photo_groups (
+      id          INTEGER PRIMARY KEY AUTOINCREMENT,
+      name        TEXT NOT NULL,
+      cover_image TEXT,
+      sort_order  INTEGER DEFAULT 0,
+      created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  // 荣誉墙照片（属于某个分组）
+  dbInstance.run(`
+    CREATE TABLE IF NOT EXISTS photos (
+      id          INTEGER PRIMARY KEY AUTOINCREMENT,
+      group_id    INTEGER NOT NULL,
+      image_url   TEXT NOT NULL,
+      title       TEXT,
+      sort_order  INTEGER DEFAULT 0,
+      created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (group_id) REFERENCES photo_groups(id)
+    )
+  `);
+
   // 插入默认管理员账号
   const adminUsername = process.env.ADMIN_USERNAME || 'admin';
   const adminPassword = process.env.ADMIN_PASSWORD || 'admin123456';

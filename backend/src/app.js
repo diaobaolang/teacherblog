@@ -8,7 +8,7 @@ const { saveMiddleware } = require('./middleware/db-save');
 
 const authRoutes = require('./routes/auth');
 const profileRoutes = require('./routes/profile');
-const carouselRoutes = require('./routes/carousel');
+const honorwallRoutes = require('./routes/honorwall');
 const articleRoutes = require('./routes/articles');
 const messageRoutes = require('./routes/messages');
 const uploadRoutes = require('./routes/upload');
@@ -32,7 +32,7 @@ app.use(saveMiddleware(db));
 // 公开 API 路由
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
-app.use('/api/carousel', carouselRoutes);
+app.use('/api/honorwall', honorwallRoutes);
 app.use('/api/articles', articleRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/admin/upload', uploadRoutes);

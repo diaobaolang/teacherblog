@@ -21,7 +21,7 @@
       </template>
       <div class="quick-actions">
         <el-button type="primary" @click="$router.push('/admin/profile')">编辑个人介绍</el-button>
-        <el-button type="success" @click="$router.push('/admin/carousel')">管理轮播图</el-button>
+        <el-button type="success" @click="$router.push('/admin/honor-wall')">管理荣誉墙</el-button>
         <el-button type="warning" @click="$router.push('/admin/articles/edit')">写新文章</el-button>
         <el-button type="info" @click="$router.push('/admin/messages')">审核留言</el-button>
       </div>
@@ -31,26 +31,27 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getAdminArticles, getAdminMessages, getCarousel } from '../../api'
+import { getAdminArticles, getAdminMessages, getAllHonorData } from '../../api'
 
 const stats = ref([
   { label: '文章总数', value: 0, icon: 'Document', color: '#409eff' },
   { label: '已发布', value: 0, icon: 'CircleCheck', color: '#67c23a' },
   { label: '待审核留言', value: 0, icon: 'ChatDotRound', color: '#e6a23c' },
-  { label: '轮播图', value: 0, icon: 'Picture', color: '#f56c6c' }
+  { label: '荣誉照片', value: 0, icon: 'Picture', color: '#f56c6c' }
 ])
 
 onMounted(async () => {
   try {
-    const [articles, messages, carousel] = await Promise.all([
+    const [articles, messages, honorData] = await Promise.all([
       getAdminArticles(),
       getAdminMessages(),
-      getCarousel()
+      getAllHonorData()
     ])
     stats.value[0].value = articles.length
     stats.value[1].value = articles.filter(a => a.status === 'published').length
     stats.value[2].value = messages.filter(m => m.status === 'pending').length
-    stats.value[3].value = carousel.length
+    const photoCount = honorData.reduce((sum, g) => sum + (g.photos?.length || 0), 0)
+    stats.value[3].value = photoCount
   } catch (e) {
     // 错误已在拦截器处理
   }

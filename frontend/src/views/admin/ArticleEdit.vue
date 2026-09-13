@@ -34,7 +34,13 @@
         </el-form-item>
 
         <el-form-item label="正文内容">
-          <div class="editor-wrapper">
+          <div class="editor-wrapper wangeditor-wrap">
+            <Toolbar
+              :editor="editorRef"
+              :defaultConfig="toolbarConfig"
+              mode="default"
+              class="wangeditor-toolbar"
+            />
             <Editor
               v-model="form.content"
               :defaultConfig="editorConfig"
@@ -65,7 +71,7 @@
 import { ref, reactive, computed, onMounted, onBeforeUnmount, shallowRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { Editor } from '@wangeditor/editor-for-vue'
+import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import '@wangeditor/editor/dist/css/style.css'
 import { getAdminArticle, createArticle, updateArticle, uploadImage } from '../../api'
 
@@ -100,6 +106,8 @@ const editorConfig = {
     }
   }
 }
+
+const toolbarConfig = {}
 
 onMounted(async () => {
   if (route.params.id) {

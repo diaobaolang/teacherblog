@@ -22,9 +22,9 @@
             <el-icon><User /></el-icon>
             <span>个人介绍</span>
           </el-menu-item>
-          <el-menu-item index="/admin/carousel">
+          <el-menu-item index="/admin/honor-wall">
             <el-icon><Picture /></el-icon>
-            <span>轮播图</span>
+            <span>荣誉墙</span>
           </el-menu-item>
           <el-menu-item index="/admin/articles">
             <el-icon><Document /></el-icon>

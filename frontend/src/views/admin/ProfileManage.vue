@@ -5,7 +5,13 @@
       <div class="editor-toolbar">
         <el-button type="primary" :loading="saving" @click="handleSave">保存</el-button>
       </div>
-      <div class="editor-wrapper">
+      <div class="editor-wrapper wangeditor-wrap">
+        <Toolbar
+          :editor="editorRef"
+          :defaultConfig="toolbarConfig"
+          mode="default"
+          class="wangeditor-toolbar"
+        />
         <Editor
           v-model="content"
           :defaultConfig="editorConfig"
@@ -21,7 +27,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, shallowRef } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Editor } from '@wangeditor/editor-for-vue'
+import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import '@wangeditor/editor/dist/css/style.css'
 import { getProfile, updateProfile, uploadImage } from '../../api'
 
@@ -43,6 +49,8 @@ const editorConfig = {
     }
   }
 }
+
+const toolbarConfig = {}
 
 onMounted(async () => {
   try {

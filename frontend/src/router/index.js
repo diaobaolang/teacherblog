@@ -21,6 +21,11 @@ const routes = [
         component: () => import('../views/ArticleDetail.vue')
       },
       {
+        path: 'honor-wall',
+        name: 'HonorWall',
+        component: () => import('../views/HonorWall.vue')
+      },
+      {
         path: 'messages',
         name: 'Messages',
         component: () => import('../views/Messages.vue')
@@ -47,9 +52,9 @@ const routes = [
         component: () => import('../views/admin/ProfileManage.vue')
       },
       {
-        path: 'carousel',
-        name: 'AdminCarousel',
-        component: () => import('../views/admin/CarouselManage.vue')
+        path: 'honor-wall',
+        name: 'AdminHonorWall',
+        component: () => import('../views/admin/HonorWallManage.vue')
       },
       {
         path: 'articles',

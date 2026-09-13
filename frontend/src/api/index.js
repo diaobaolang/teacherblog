@@ -4,12 +4,18 @@ import request from './request'
 export const getProfile = () => request.get('/profile')
 export const updateProfile = (content) => request.put('/profile', { content })
 
-// 轮播图
-export const getCarousel = () => request.get('/carousel')
-export const addCarousel = (data) => request.post('/carousel', data)
-export const updateCarousel = (id, data) => request.put(`/carousel/${id}`, data)
-export const deleteCarousel = (id) => request.delete(`/carousel/${id}`)
-export const sortCarousel = (items) => request.put('/carousel/sort', { items })
+// 荣誉墙
+export const getHonorGroups = () => request.get('/honorwall/groups')
+export const getGroupPhotos = (groupId) => request.get(`/honorwall/groups/${groupId}/photos`)
+export const getAllHonorData = () => request.get('/honorwall/all')
+export const createHonorGroup = (data) => request.post('/honorwall/groups', data)
+export const updateHonorGroup = (id, data) => request.put(`/honorwall/groups/${id}`, data)
+export const deleteHonorGroup = (id) => request.delete(`/honorwall/groups/${id}`)
+export const sortHonorGroups = (items) => request.put('/honorwall/groups/sort', { items })
+export const addPhoto = (groupId, data) => request.post(`/honorwall/groups/${groupId}/photos`, data)
+export const updatePhoto = (id, data) => request.put(`/honorwall/photos/${id}`, data)
+export const deletePhoto = (id) => request.delete(`/honorwall/photos/${id}`)
+export const sortPhotos = (groupId, items) => request.put(`/honorwall/groups/${groupId}/photos/sort`, { items })
 
 // 文章
 export const getArticles = (params) => request.get('/articles', { params })

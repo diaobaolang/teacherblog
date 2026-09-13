@@ -10,6 +10,7 @@
 
         <nav class="nav-pc">
           <router-link to="/" class="nav-link">首页</router-link>
+          <router-link to="/honor-wall" class="nav-link">荣誉墙</router-link>
           <router-link to="/articles" class="nav-link">文章</router-link>
           <router-link to="/messages" class="nav-link">留言</router-link>
         </nav>
@@ -20,6 +21,7 @@
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item command="/">首页</el-dropdown-item>
+              <el-dropdown-item command="/honor-wall">荣誉墙</el-dropdown-item>
               <el-dropdown-item command="/articles">文章</el-dropdown-item>
               <el-dropdown-item command="/messages">留言</el-dropdown-item>
             </el-dropdown-menu>
