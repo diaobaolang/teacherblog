@@ -78,7 +78,7 @@ router.put('/admin/:id/review', authMiddleware, async (req, res) => {
     return res.status(404).json({ error: '留言不存在' });
   }
 
-  await pgClient.update('messages', { status, reviewed_at: 'now()' }, { id });
+  await pgClient.update('messages', { status, reviewed_at: new Date().toISOString() }, { id });
 
   res.json({ message: `留言已${status === 'approved' ? '通过' : '拒绝'}` });
 });

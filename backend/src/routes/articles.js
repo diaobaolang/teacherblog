@@ -86,7 +86,8 @@ router.post('/admin', authMiddleware, async (req, res) => {
 });
 
 // 管理：编辑文章
-router.put('/admin/:id', authMiddleware, async (req, res) => {
+// 注意：数字约束 :id(\d+) 保证 PUT /admin/sort 不会被本路由抢先匹配
+router.put('/admin/:id(\\d+)', authMiddleware, async (req, res) => {
   const { id } = req.params;
   const { title, content, cover_image, summary, status, sort_order } = req.body;
 
@@ -102,7 +103,7 @@ router.put('/admin/:id', authMiddleware, async (req, res) => {
     summary: summary !== undefined ? summary : existing.summary,
     status: status !== undefined ? status : existing.status,
     sort_order: sort_order !== undefined ? sort_order : existing.sort_order,
-    updated_at: 'now()',
+    updated_at: new Date().toISOString(),
   }, { id });
 
   res.json({ message: '文章已更新' });

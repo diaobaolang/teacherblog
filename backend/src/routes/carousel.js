@@ -31,7 +31,8 @@ router.post('/', authMiddleware, async (req, res) => {
 });
 
 // 管理：编辑轮播图
-router.put('/:id', authMiddleware, async (req, res) => {
+// 注意：数字约束 :id(\d+) 保证 PUT /sort 不会被本路由抢先匹配
+router.put('/:id(\\d+)', authMiddleware, async (req, res) => {
   const { id } = req.params;
   const { image_url, title } = req.body;
 

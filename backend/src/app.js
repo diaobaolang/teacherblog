@@ -3,6 +3,10 @@ const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
 
+// 统一包装 async 路由异常（需在加载路由前引入），
+// 避免未捕获异常导致请求悬挂、进程退出
+require('./middleware/async-handler');
+
 const { initDatabase } = require('./db');
 
 const authRoutes = require('./routes/auth');
@@ -43,6 +47,14 @@ app.use('/api/carousel', carouselRoutes);
 // 错误处理
 app.use(notFound);
 app.use(errorHandler);
+
+// 进程级兜底：打印异常但不让服务直接退出
+process.on('unhandledRejection', (reason) => {
+  console.error('[unhandledRejection]', reason);
+});
+process.on('uncaughtException', (err) => {
+  console.error('[uncaughtException]', err);
+});
 
 // 初始化数据库后启动服务
 initDatabase().then(() => {

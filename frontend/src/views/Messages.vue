@@ -378,17 +378,19 @@ function formatDate(dateStr) {
 
 @media (max-width: 768px) {
   .fab-container {
-    bottom: 24px;
-    right: 24px;
+    /* 抬高到底部导航栏（54px）之上，并预留安全区，避免被遮挡 */
+    bottom: calc(54px + constant(safe-area-inset-bottom) + 24px);
+    bottom: calc(54px + env(safe-area-inset-bottom) + 24px);
+    right: 16px;
   }
 
   .fab-ball {
-    width: 52px;
-    height: 52px;
+    width: 44px;
+    height: 44px;
   }
 
   .fab-icon {
-    font-size: 22px;
+    font-size: 19px;
   }
 
   .form-popup {

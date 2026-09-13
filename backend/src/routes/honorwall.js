@@ -59,7 +59,8 @@ router.post('/groups', authMiddleware, async (req, res) => {
 });
 
 // 编辑分组
-router.put('/groups/:id', authMiddleware, async (req, res) => {
+// 注意：数字约束 :id(\d+) 保证 PUT /groups/sort 不会被本路由抢先匹配
+router.put('/groups/:id(\\d+)', authMiddleware, async (req, res) => {
   const { id } = req.params;
   const { name, cover_image } = req.body;
   const existing = await pgClient.getOne('photo_groups', { filters: { id } });

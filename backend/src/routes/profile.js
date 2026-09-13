@@ -19,7 +19,7 @@ router.put('/', authMiddleware, async (req, res) => {
 
   const existing = await pgClient.getOne('profile', { order: 'id.desc' });
   if (existing) {
-    await pgClient.update('profile', { content, updated_at: 'now()' }, { id: existing.id });
+    await pgClient.update('profile', { content, updated_at: new Date().toISOString() }, { id: existing.id });
   } else {
     await pgClient.insert('profile', { content });
   }

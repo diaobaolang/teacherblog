@@ -10,64 +10,66 @@
     </el-tabs>
 
     <el-card shadow="never">
-      <div v-if="filteredList.length" class="message-list">
-        <div v-for="msg in filteredList" :key="msg.id" class="message-row">
-          <div class="message-info">
-            <div class="message-header">
-              <span class="nickname">{{ msg.nickname }}</span>
-              <el-tag :type="statusTagType(msg.status)" size="small">{{ statusText(msg.status) }}</el-tag>
-              <span class="date">{{ formatDate(msg.created_at) }}</span>
-            </div>
-            <p class="content">{{ msg.content }}</p>
-          </div>
-
-          <div class="message-actions">
-            <template v-if="msg.status === 'pending'">
-              <el-button type="success" size="small" @click="handleReview(msg.id, 'approved')">通过</el-button>
-              <el-button type="danger" size="small" @click="handleReview(msg.id, 'rejected')">拒绝</el-button>
-            </template>
-            <el-popconfirm title="确定删除此留言？" @confirm="handleDelete(msg.id)">
-
-              <template #reference>
-                <el-button type="danger" text size="small">删除</el-button>
-              </template>
-            </el-popconfirm>
-          </div>
-        </div>
-      </div>
-      <el-empty v-else description="暂无留言" />
-    </el-card>
-
-    <!-- 已通过留言排序 -->
-    <el-card v-if="activeTab === 'approved' && approvedList.length" shadow="never" class="sort-card">
       <template #header>
         <div class="card-header">
-          <span>调整展示顺序</span>
-          <el-button type="primary" size="small" @click="handleSort">保存排序</el-button>
+          <span>留言列表</span>
+          <span v-if="activeTab === 'approved' && displayList.length > 1" class="tip">
+            拖拽左侧手柄调整展示顺序，松开自动保存
+          </span>
         </div>
       </template>
-      <draggable v-model="approvedList" item-key="id" handle=".drag-handle">
+
+      <draggable
+        v-if="displayList.length"
+        v-model="displayList"
+        item-key="id"
+        handle=".drag-handle"
+        :disabled="activeTab !== 'approved'"
+        @end="handleSort"
+      >
         <template #item="{ element }">
-          <div class="sort-item">
-            <el-icon class="drag-handle"><Rank /></el-icon>
-            <span class="sort-nickname">{{ element.nickname }}</span>
-            <span class="sort-content">{{ element.content.slice(0, 40) }}...</span>
+          <div class="message-row" :class="{ 'is-draggable': activeTab === 'approved' }">
+            <el-icon v-if="activeTab === 'approved'" class="drag-handle"><Rank /></el-icon>
+
+            <div class="message-info">
+              <div class="message-header">
+                <span class="nickname">{{ element.nickname }}</span>
+                <el-tag :type="statusTagType(element.status)" size="small">{{ statusText(element.status) }}</el-tag>
+                <span class="date">{{ formatDate(element.created_at) }}</span>
+              </div>
+              <p class="content">{{ element.content }}</p>
+            </div>
+
+            <div class="message-actions">
+              <template v-if="element.status === 'pending'">
+                <el-button type="success" size="small" @click="handleReview(element.id, 'approved')">通过</el-button>
+                <el-button type="danger" size="small" @click="handleReview(element.id, 'rejected')">拒绝</el-button>
+              </template>
+              <el-popconfirm title="确定删除此留言？" @confirm="handleDelete(element.id)">
+                <template #reference>
+                  <el-button type="danger" text size="small">删除</el-button>
+                </template>
+              </el-popconfirm>
+            </div>
           </div>
         </template>
       </draggable>
+
+      <el-empty v-else description="暂无留言" />
     </el-card>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import draggable from 'vuedraggable'
 import { getAdminMessages, reviewMessage, deleteMessage, sortMessages } from '../../api'
 
 const activeTab = ref('pending')
 const list = ref([])
-const approvedList = ref([])
+// 当前标签页展示的列表（仅"已通过"可拖拽排序）
+const displayList = ref([])
 
 onMounted(() => loadList())
 
@@ -75,16 +77,22 @@ async function loadList() {
   try {
     const data = await getAdminMessages()
     list.value = data
-    approvedList.value = data.filter(m => m.status === 'approved')
+    rebuildDisplay()
   } catch (e) {
     // 错误已在拦截器处理
   }
 }
 
-const filteredList = computed(() => {
-  if (activeTab.value === 'all') return list.value
-  return list.value.filter(m => m.status === activeTab.value)
-})
+function rebuildDisplay() {
+  const filtered = activeTab.value === 'all'
+    ? list.value
+    : list.value.filter(m => m.status === activeTab.value)
+
+  // "已通过"按实际展示顺序（sort_order）排列，与前台保持一致
+  displayList.value = activeTab.value === 'approved'
+    ? [...filtered].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
+    : [...filtered]
+}
 
 async function handleReview(id, status) {
   try {
@@ -106,13 +114,14 @@ async function handleDelete(id) {
   }
 }
 
+// 拖拽结束后自动保存顺序
 async function handleSort() {
   try {
-    await sortMessages(approvedList.value.map(item => ({ id: item.id })))
-    ElMessage.success('排序已保存')
-    await loadList()
+    await sortMessages(displayList.value.map(item => ({ id: item.id })))
+    ElMessage.success('排序已更新')
   } catch (e) {
-    // 错误已在拦截器处理
+    // 保存失败时重新拉取，恢复为服务端顺序
+    await loadList()
   }
 }
 
@@ -135,23 +144,47 @@ function formatDate(dateStr) {
   margin-bottom: 20px;
 }
 
-.message-list {
+.card-header {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tip {
+  font-size: 13px;
+  color: #909399;
 }
 
 .message-row {
   display: flex;
-  justify-content: space-between;
   align-items: flex-start;
+  gap: 12px;
   padding: 12px;
+  margin-bottom: 12px;
   border: 1px solid #f0f0f0;
   border-radius: 8px;
+  background: #fff;
+}
+
+.message-row.is-draggable {
+  cursor: default;
+}
+
+.drag-handle {
+  cursor: move;
+  color: #c0c4cc;
+  font-size: 18px;
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+.drag-handle:hover {
+  color: #409eff;
 }
 
 .message-info {
   flex: 1;
+  min-width: 0;
 }
 
 .message-header {
@@ -180,38 +213,5 @@ function formatDate(dateStr) {
   display: flex;
   gap: 8px;
   flex-shrink: 0;
-}
-
-.sort-card {
-  margin-top: 24px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.sort-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 0;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.drag-handle {
-  cursor: move;
-  color: #c0c4cc;
-}
-
-.sort-nickname {
-  font-weight: 600;
-  min-width: 80px;
-}
-
-.sort-content {
-  color: #909399;
-  font-size: 13px;
 }
 </style>
