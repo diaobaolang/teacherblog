@@ -5,7 +5,7 @@
       <div class="container header-inner">
         <router-link to="/" class="logo">
           <el-icon><Notebook /></el-icon>
-          <span>教师博客</span>
+          <span>石老师教学圈</span>
         </router-link>
 
         <nav class="nav-pc">
