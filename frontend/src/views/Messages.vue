@@ -19,24 +19,25 @@
       <el-empty v-else description="暂无留言，快来第一个留言吧" />
     </div>
 
-    <!-- 悬浮球形按钮 -->
-    <div class="fab-container">
+    <!-- 悬浮留言按钮（仅手机端显示） -->
+    <div v-if="isMobile" class="fab-container">
       <div class="fab-ball" :class="{ 'fab-active': showForm }" @click="showForm ? (showForm = false) : openForm()">
         <el-icon class="fab-icon"><EditPen v-if="!showForm" /><Close v-else /></el-icon>
+        <span class="fab-label">留言</span>
         <span class="fab-ripple"></span>
         <span class="fab-ripple fab-ripple-delay"></span>
       </div>
     </div>
 
-    <!-- 留言表单弹窗 -->
+    <!-- 留言表单：电脑端常驻悬浮右上角，手机端点击悬浮按钮弹出 -->
     <transition name="form-slide">
-      <el-card v-if="showForm" class="form-popup" shadow="always">
+      <el-card v-if="showForm || !isMobile" class="form-popup" shadow="always">
         <template #header>
           <div class="card-header">
             <el-icon><EditPen /></el-icon>
             <span>写留言</span>
             <span class="form-subtitle">（学生与家长留言）</span>
-            <el-icon class="form-close" @click="showForm = false"><Close /></el-icon>
+            <el-icon v-if="isMobile" class="form-close" @click="showForm = false"><Close /></el-icon>
           </div>
         </template>
         <el-form :model="form" label-position="top" @submit.prevent="handleSubmit">
@@ -53,17 +54,18 @@
               show-word-limit
             />
           </el-form-item>
+          <p class="content-hint">老师看过留言后觉得很精彩会把它放在留言板给大家一起看哦。</p>
           <div class="form-footer">
-            <el-button @click="showForm = false">取消</el-button>
+            <el-button v-if="isMobile" @click="showForm = false">取消</el-button>
             <el-button type="primary" :loading="submitting" @click="handleSubmit">提交留言</el-button>
           </div>
         </el-form>
       </el-card>
     </transition>
 
-    <!-- 遮罩层 -->
+    <!-- 遮罩层（仅手机端） -->
     <transition name="fade">
-      <div v-if="showForm" class="fab-mask" @click="showForm = false"></div>
+      <div v-if="showForm && isMobile" class="fab-mask" @click="showForm = false"></div>
     </transition>
   </div>
 </template>
@@ -78,6 +80,8 @@ const messages = ref([])
 const submitting = ref(false)
 const showForm = ref(false)
 const keyboardOffset = ref(0)
+// 是否手机端：电脑端表单常驻右上角，手机端用悬浮按钮弹出
+const isMobile = ref(window.innerWidth <= 768)
 const form = ref({
   nickname: '',
   content: ''
@@ -85,6 +89,7 @@ const form = ref({
 
 onMounted(() => {
   loadMessages()
+  window.addEventListener('resize', handleResize)
   if (window.visualViewport) {
     window.visualViewport.addEventListener('resize', handleViewportResize)
     window.visualViewport.addEventListener('scroll', handleViewportResize)
@@ -92,11 +97,17 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+  window.removeEventListener('resize', handleResize)
   if (window.visualViewport) {
     window.visualViewport.removeEventListener('resize', handleViewportResize)
     window.visualViewport.removeEventListener('scroll', handleViewportResize)
   }
 })
+
+// 窗口尺寸变化时切换电脑端 / 手机端形态
+function handleResize() {
+  isMobile.value = window.innerWidth <= 768
+}
 
 // 监听可视区域变化（移动端键盘弹出/收起时触发）
 function handleViewportResize() {
@@ -136,7 +147,7 @@ async function handleSubmit() {
   submitting.value = true
   try {
     await submitMessage(form.value)
-    ElMessage.success('留言已提交，等待管理员审核')
+    ElMessage.success('留言成功')
     form.value.nickname = ''
     form.value.content = ''
     showForm.value = false
@@ -262,6 +273,13 @@ function formatDate(dateStr) {
   z-index: 2;
 }
 
+.fab-label {
+  color: #fff;
+  font-size: 12px;
+  line-height: 1;
+  z-index: 2;
+}
+
 /* 波纹动画 */
 .fab-ripple {
   position: absolute;
@@ -310,19 +328,29 @@ function formatDate(dateStr) {
   opacity: 0;
 }
 
-/* ===== 弹窗表单 ===== */
+/* ===== 留言表单 ===== */
+/* 电脑端：表单常驻悬浮在页面右上角 */
 .form-popup {
   position: fixed;
-  bottom: 120px;
-  right: 40px;
-  width: 400px;
-  max-width: calc(100vw - 80px);
+  top: 84px;
+  bottom: auto;
+  left: auto;
+  right: max(20px, calc((100vw - 1200px) / 2 + 20px));
+  width: 380px;
+  max-width: none;
   z-index: 202;
   border-radius: 12px;
   overflow: hidden;
   /* 动态偏移：移动端键盘弹出时上移 */
   transform: translateY(calc(-1 * v-bind(keyboardOffset) + 0px));
   transition: transform 0.25s ease;
+}
+
+/* 电脑端：表单固定在右上角，内容区右侧留出空间避免被遮挡 */
+@media (min-width: 769px) {
+  .messages-page {
+    padding-right: 420px;
+  }
 }
 
 .card-header {
@@ -357,6 +385,14 @@ function formatDate(dateStr) {
   gap: 12px;
 }
 
+/* 留言内容下方的蓝色提示文字 */
+.content-hint {
+  margin: -8px 0 16px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #409eff;
+}
+
 /* 弹窗滑入动画 */
 .form-slide-enter-active {
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -385,12 +421,18 @@ function formatDate(dateStr) {
   }
 
   .fab-ball {
-    width: 44px;
-    height: 44px;
+    width: 54px;
+    height: 54px;
+    flex-direction: column;
+    gap: 1px;
   }
 
   .fab-icon {
-    font-size: 19px;
+    font-size: 18px;
+  }
+
+  .fab-label {
+    font-size: 11px;
   }
 
   .form-popup {
