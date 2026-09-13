@@ -21,7 +21,7 @@
       </el-carousel>
 
       <!-- 无荣誉照片时的占位 -->
-      <div v-else class="carousel-placeholder" @click="goHonorWall">
+      <div v-else class="carousel-placeholder honor-placeholder" @click="goHonorWall">
         <div class="placeholder-item">
           <el-icon class="placeholder-icon"><PictureFilled /></el-icon>
           <p class="placeholder-text">荣誉墙</p>
@@ -44,12 +44,45 @@
       <div class="profile-content" v-html="profile.content || '暂无介绍'"></div>
     </el-card>
 
-    <!-- 最新文章 -->
+    <!-- 班级照轮播 -->
+    <div class="honor-section">
+      <h2 class="section-title" @click="goClassWall">
+        班级照
+        <span class="section-more">查看全部 ></span>
+      </h2>
+      <el-carousel
+        v-if="classPhotos.length"
+        height="360px"
+        :interval="4000"
+        arrow="hover"
+        class="honor-carousel"
+        @click="goClassWall"
+      >
+        <el-carousel-item v-for="(photo, index) in carouselClassPhotos" :key="index">
+          <img :src="photo.image_url" :alt="photo.title" class="carousel-img" />
+          <div v-if="photo.title" class="carousel-title">{{ photo.title }}</div>
+        </el-carousel-item>
+      </el-carousel>
+
+      <!-- 无班级照时的占位 -->
+      <div v-else class="carousel-placeholder class-placeholder" @click="goClassWall">
+        <div class="placeholder-item">
+          <el-icon class="placeholder-icon"><Camera /></el-icon>
+          <p class="placeholder-text">班级照</p>
+          <p class="placeholder-sub">请在后台上传班级照片</p>
+          <el-button type="primary" text class="placeholder-btn">
+            前往上传
+          </el-button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 最新动态 -->
     <el-card class="latest-articles" shadow="hover">
       <template #header>
         <div class="card-header">
           <el-icon><Document /></el-icon>
-          <span>最新文章</span>
+          <span>最新动态</span>
           <router-link to="/articles" class="more">查看全部</router-link>
         </div>
       </template>
@@ -63,7 +96,7 @@
           </div>
         </div>
       </div>
-      <el-empty v-else description="暂无文章" />
+      <el-empty v-else description="暂无动态" />
     </el-card>
   </div>
 </template>
@@ -71,12 +104,13 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { getProfile, getAllHonorData, getArticles } from '../api'
+import { getProfile, getAllHonorData, getAllClassData, getArticles } from '../api'
 
 const router = useRouter()
 
 const profile = ref({ content: '' })
 const honorGroups = ref([])
+const classGroups = ref([])
 const latestArticles = ref([])
 
 // 所有荣誉照片（从所有分组中收集）
@@ -90,18 +124,45 @@ const honorPhotos = computed(() => {
   return photos
 })
 
-// 首页轮播最多展示 10 张
-const carouselPhotos = computed(() => honorPhotos.value.slice(0, 10))
+// 从照片数组中随机抽取 n 张
+function pickRandom(arr, n) {
+  const pool = [...arr]
+  const result = []
+  const count = Math.min(n, pool.length)
+  for (let i = 0; i < count; i++) {
+    const idx = Math.floor(Math.random() * pool.length)
+    result.push(pool.splice(idx, 1)[0])
+  }
+  return result
+}
+
+// 首页轮播随机展示 5 张
+const carouselPhotos = computed(() => pickRandom(honorPhotos.value, 5))
+
+// 所有班级照
+const classPhotos = computed(() => {
+  const photos = []
+  classGroups.value.forEach(g => {
+    if (g.photos) {
+      photos.push(...g.photos)
+    }
+  })
+  return photos
+})
+
+const carouselClassPhotos = computed(() => pickRandom(classPhotos.value, 5))
 
 onMounted(async () => {
   try {
-    const [profileData, honorData, articlesData] = await Promise.all([
+    const [profileData, honorData, classData, articlesData] = await Promise.all([
       getProfile(),
       getAllHonorData(),
+      getAllClassData(),
       getArticles({ page: 1, pageSize: 5 })
     ])
     profile.value = profileData
     honorGroups.value = honorData
+    classGroups.value = classData
     latestArticles.value = articlesData.list
   } catch (e) {
     // 错误已在拦截器处理
@@ -110,6 +171,10 @@ onMounted(async () => {
 
 function goHonorWall() {
   router.push('/honor-wall')
+}
+
+function goClassWall() {
+  router.push('/class-wall')
 }
 
 function goArticle(id) {
@@ -252,10 +317,17 @@ function formatDate(dateStr) {
   height: 360px;
   border-radius: 8px;
   overflow: hidden;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.honor-placeholder {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.class-placeholder {
+  background: linear-gradient(135deg, #43e97b 0%, #38a169 100%);
 }
 
 .placeholder-item {

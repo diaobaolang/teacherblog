@@ -1,6 +1,6 @@
 <template>
   <div class="message-manage">
-    <h2 class="page-title">留言审核</h2>
+    <h2 class="page-title">学生与家长留言审核</h2>
 
     <el-tabs v-model="activeTab" @tab-change="loadList">
       <el-tab-pane label="待审核" name="pending" />
@@ -27,6 +27,7 @@
               <el-button type="danger" size="small" @click="handleReview(msg.id, 'rejected')">拒绝</el-button>
             </template>
             <el-popconfirm title="确定删除此留言？" @confirm="handleDelete(msg.id)">
+
               <template #reference>
                 <el-button type="danger" text size="small">删除</el-button>
               </template>

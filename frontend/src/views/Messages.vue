@@ -1,6 +1,6 @@
 <template>
   <div class="messages-page">
-    <h1 class="page-title">留言板</h1>
+    <h1 class="page-title">学生与家长留言</h1>
 
     <!-- 留言列表 -->
     <div class="message-list">
@@ -25,6 +25,7 @@
         <div class="card-header">
           <el-icon><EditPen /></el-icon>
           <span>写留言</span>
+          <span class="form-subtitle">（学生与家长留言）</span>
         </div>
       </template>
       <el-form :model="form" label-position="top" @submit.prevent="handleSubmit">
@@ -77,6 +78,7 @@ async function handleSubmit() {
   }
   if (!form.value.content.trim()) {
     ElMessage.warning('请输入留言内容')
+
     return
   }
 
@@ -162,5 +164,11 @@ function formatDate(dateStr) {
   gap: 8px;
   font-size: 16px;
   font-weight: 600;
+}
+
+.form-subtitle {
+  font-size: 13px;
+  font-weight: 400;
+  color: #909399;
 }
 </style>

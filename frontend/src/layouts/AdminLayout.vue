@@ -26,13 +26,17 @@
             <el-icon><Picture /></el-icon>
             <span>荣誉墙</span>
           </el-menu-item>
+          <el-menu-item index="/admin/class-wall">
+            <el-icon><Camera /></el-icon>
+            <span>班级照</span>
+          </el-menu-item>
           <el-menu-item index="/admin/articles">
             <el-icon><Document /></el-icon>
-            <span>文章管理</span>
+            <span>学习动态管理</span>
           </el-menu-item>
           <el-menu-item index="/admin/messages">
             <el-icon><ChatDotRound /></el-icon>
-            <span>留言审核</span>
+            <span>学生与家长留言审核</span>
           </el-menu-item>
         </el-menu>
       </el-aside>

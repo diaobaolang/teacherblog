@@ -20,7 +20,7 @@
       <div class="content" v-html="article.content"></div>
     </article>
 
-    <el-empty v-else description="文章不存在或未发布" />
+    <el-empty v-else description="动态不存在或未发布" />
   </div>
 </template>
 

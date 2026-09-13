@@ -1,7 +1,7 @@
 <template>
   <div class="article-edit">
     <div class="header-row">
-      <h2 class="page-title">{{ isEdit ? '编辑文章' : '写新文章' }}</h2>
+      <h2 class="page-title">{{ isEdit ? '编辑动态' : '写新动态' }}</h2>
       <el-button text @click="$router.back()">
         <el-icon><ArrowLeft /></el-icon>返回
       </el-button>
@@ -10,11 +10,11 @@
     <el-card shadow="never" v-loading="loading">
       <el-form :model="form" label-position="top">
         <el-form-item label="标题">
-          <el-input v-model="form.title" placeholder="请输入文章标题" maxlength="100" show-word-limit />
+          <el-input v-model="form.title" placeholder="请输入动态标题" maxlength="100" show-word-limit />
         </el-form-item>
 
         <el-form-item label="摘要">
-          <el-input v-model="form.summary" type="textarea" :rows="2" placeholder="一句话概括文章内容" maxlength="200" show-word-limit />
+          <el-input v-model="form.summary" type="textarea" :rows="2" placeholder="一句话概括动态内容" maxlength="200" show-word-limit />
         </el-form-item>
 
         <el-form-item label="封面图">
@@ -157,7 +157,7 @@ async function handleCoverUpload({ file }) {
 
 async function handleSave() {
   if (!form.title.trim()) {
-    ElMessage.warning('请输入文章标题')
+    ElMessage.warning('请输入动态标题')
     return
   }
 

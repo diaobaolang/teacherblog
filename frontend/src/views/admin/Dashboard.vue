@@ -22,7 +22,7 @@
       <div class="quick-actions">
         <el-button type="primary" @click="$router.push('/admin/profile')">编辑个人介绍</el-button>
         <el-button type="success" @click="$router.push('/admin/honor-wall')">管理荣誉墙</el-button>
-        <el-button type="warning" @click="$router.push('/admin/articles/edit')">写新文章</el-button>
+        <el-button type="warning" @click="$router.push('/admin/articles/edit')">写新动态</el-button>
         <el-button type="info" @click="$router.push('/admin/messages')">审核留言</el-button>
       </div>
     </el-card>
@@ -34,7 +34,7 @@ import { ref, onMounted } from 'vue'
 import { getAdminArticles, getAdminMessages, getAllHonorData } from '../../api'
 
 const stats = ref([
-  { label: '文章总数', value: 0, icon: 'Document', color: '#409eff' },
+  { label: '动态总数', value: 0, icon: 'Document', color: '#409eff' },
   { label: '已发布', value: 0, icon: 'CircleCheck', color: '#67c23a' },
   { label: '待审核留言', value: 0, icon: 'ChatDotRound', color: '#e6a23c' },
   { label: '荣誉照片', value: 0, icon: 'Picture', color: '#f56c6c' }

@@ -1,6 +1,6 @@
 <template>
   <div class="article-list-page">
-    <h1 class="page-title">文章列表</h1>
+    <h1 class="page-title">学习动态</h1>
 
     <div v-if="loading" class="loading">
       <el-skeleton :rows="5" animated />
@@ -26,7 +26,7 @@
       </el-card>
     </div>
 
-    <el-empty v-else description="暂无文章" />
+    <el-empty v-else description="暂无动态" />
 
     <div v-if="totalPages > 1" class="pagination">
       <el-pagination

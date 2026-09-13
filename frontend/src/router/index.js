@@ -26,6 +26,11 @@ const routes = [
         component: () => import('../views/HonorWall.vue')
       },
       {
+        path: 'class-wall',
+        name: 'ClassWall',
+        component: () => import('../views/ClassWall.vue')
+      },
+      {
         path: 'messages',
         name: 'Messages',
         component: () => import('../views/Messages.vue')
@@ -55,6 +60,11 @@ const routes = [
         path: 'honor-wall',
         name: 'AdminHonorWall',
         component: () => import('../views/admin/HonorWallManage.vue')
+      },
+      {
+        path: 'class-wall',
+        name: 'AdminClassWall',
+        component: () => import('../views/admin/ClassWallManage.vue')
       },
       {
         path: 'articles',

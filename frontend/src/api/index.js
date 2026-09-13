@@ -17,6 +17,17 @@ export const updatePhoto = (id, data) => request.put(`/honorwall/photos/${id}`, 
 export const deletePhoto = (id) => request.delete(`/honorwall/photos/${id}`)
 export const sortPhotos = (groupId, items) => request.put(`/honorwall/groups/${groupId}/photos/sort`, { items })
 
+// 班级照
+export const getAllClassData = () => request.get('/classwall/all')
+export const createClassGroup = (data) => request.post('/classwall/groups', data)
+export const updateClassGroup = (id, data) => request.put(`/classwall/groups/${id}`, data)
+export const deleteClassGroup = (id) => request.delete(`/classwall/groups/${id}`)
+export const sortClassGroups = (items) => request.put('/classwall/groups/sort', { items })
+export const addClassPhoto = (groupId, data) => request.post(`/classwall/groups/${groupId}/photos`, data)
+export const updateClassPhoto = (id, data) => request.put(`/classwall/photos/${id}`, data)
+export const deleteClassPhoto = (id) => request.delete(`/classwall/photos/${id}`)
+export const sortClassPhotos = (groupId, items) => request.put(`/classwall/groups/${groupId}/photos/sort`, { items })
+
 // 文章
 export const getArticles = (params) => request.get('/articles', { params })
 export const getArticle = (id) => request.get(`/articles/${id}`)

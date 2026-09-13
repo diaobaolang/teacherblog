@@ -11,8 +11,9 @@
         <nav class="nav-pc">
           <router-link to="/" class="nav-link">首页</router-link>
           <router-link to="/honor-wall" class="nav-link">荣誉墙</router-link>
-          <router-link to="/articles" class="nav-link">文章</router-link>
-          <router-link to="/messages" class="nav-link">留言</router-link>
+          <router-link to="/class-wall" class="nav-link">班级照</router-link>
+          <router-link to="/articles" class="nav-link">学习动态</router-link>
+          <router-link to="/messages" class="nav-link">学生与家长留言</router-link>
         </nav>
 
         <!-- 移动端汉堡菜单 -->
@@ -22,8 +23,9 @@
             <el-dropdown-menu>
               <el-dropdown-item command="/">首页</el-dropdown-item>
               <el-dropdown-item command="/honor-wall">荣誉墙</el-dropdown-item>
-              <el-dropdown-item command="/articles">文章</el-dropdown-item>
-              <el-dropdown-item command="/messages">留言</el-dropdown-item>
+              <el-dropdown-item command="/class-wall">班级照</el-dropdown-item>
+              <el-dropdown-item command="/articles">学习动态</el-dropdown-item>
+              <el-dropdown-item command="/messages">学生与家长留言</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>

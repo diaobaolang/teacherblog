@@ -1,8 +1,8 @@
 <template>
   <div class="article-manage">
     <div class="header-row">
-      <h2 class="page-title">文章管理</h2>
-      <el-button type="primary" @click="$router.push('/admin/articles/edit')">写新文章</el-button>
+      <h2 class="page-title">学习动态管理</h2>
+      <el-button type="primary" @click="$router.push('/admin/articles/edit')">写新动态</el-button>
     </div>
 
     <el-card shadow="never">
@@ -21,7 +21,7 @@
         <el-table-column label="操作" width="200" fixed="right">
           <template #default="{ row }">
             <el-button text type="primary" @click="$router.push(`/admin/articles/edit/${row.id}`)">编辑</el-button>
-            <el-popconfirm title="确定删除此文章？" @confirm="handleDelete(row.id)">
+            <el-popconfirm title="确定删除此动态？" @confirm="handleDelete(row.id)">
               <template #reference>
                 <el-button text type="danger">删除</el-button>
               </template>
